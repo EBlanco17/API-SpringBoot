@@ -2,6 +2,7 @@ package med.volt.api.domain.consulta;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,21 +17,34 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of = "id")
 public class Consulta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="medico_id")
+    @JoinColumn(name = "medico_id")
     private Medico medico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="paciente_id")
+    @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fecha;
 
+    @Column(name = "motivo")
+    @Enumerated(EnumType.STRING)
+    private MotivoCancelamiento motivoCancelamiento;
+
+    public Consulta( Medico medico, Paciente paciente, LocalDateTime fecha) {
+        this.medico=medico;
+        this.paciente=paciente;
+        this.fecha=fecha;
+    }
+
+    public void cancelar(MotivoCancelamiento motivo) {
+        this.motivoCancelamiento = motivo;
+    }
 }
